@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"huffman/heap"
-	"huffman/tree"
 	"io"
 	"log"
 	"os"
+
+	"huffman/heap"
+	"huffman/tree"
 )
 
 func main() {
@@ -15,7 +16,25 @@ func main() {
 		log.Fatal(err)
 	}
 	fmt.Printf("/* heap has %d elements */\n", len(h))
-	heap.Draw(h)
+
+	for len(h) > 1 {
+		var hn1, hn2 heap.Node
+
+		h, hn1 = h.Delete()
+		h, hn2 = h.Delete()
+
+		in1 := &tree.Interior{
+			Left:  hn1.(tree.Node),
+			Right: hn2.(tree.Node),
+			Freq:  hn1.Value() + hn2.Value(),
+		}
+
+		h = h.Insert(in1)
+	}
+
+	h, root := h.Delete()
+
+	tree.Draw(root.(tree.Node))
 }
 
 func constructHeap(fileName string) (heap.Heap, error) {
@@ -39,7 +58,7 @@ func constructHeap(fileName string) (heap.Heap, error) {
 			return nil, err
 		}
 		if n != 2 {
-			fmt.Fprintf(os.Stderr, "line %d parse %d fields\n", n)
+			fmt.Fprintf(os.Stderr, "line %d parse %d fields\n", lineNo, n)
 			continue
 		}
 		node := &tree.Leaf{
