@@ -26,3 +26,11 @@ func (l *Leaf) GreaterThan(other heap.Node) bool {
 	}
 	return false
 }
+
+func (l *Leaf) LeftChild() Node {
+	return (*Leaf)(nil)
+}
+
+func (l *Leaf) RightChild() Node {
+	return (*Leaf)(nil)
+}

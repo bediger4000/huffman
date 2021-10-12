@@ -26,3 +26,11 @@ func (n *Interior) GreaterThan(other heap.Node) bool {
 	}
 	return false
 }
+
+func (n *Interior) LeftChild() Node {
+	return n.Left
+}
+
+func (n *Interior) RightChild() Node {
+	return n.Right
+}
