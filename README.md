@@ -31,3 +31,12 @@ Given a dictionary of character frequencies,
 build a Huffman tree,
 and use it to determine a mapping between characters
 and their encoded binary strings.
+
+## Analysis
+
+"[Easy]".
+I had no idea how to do this,
+even after pondering for a while.
+The [Huffman coding](https://en.wikipedia.org/wiki/Huffman_coding) wikipedia page
+gives a "simple algorithm" that involves building a tree from a minimum priority queue,
+where the priority of a character is that character's frequency.
