@@ -32,6 +32,24 @@ build a Huffman tree,
 and use it to determine a mapping between characters
 and their encoded binary strings.
 
+## Build and run
+
+```sh
+$ go build .
+$ ./huffman -t -i better.tbl > better.dot
+$ dot -Tpng -o better.png better.dot
+$ ./huffman -i better.tbl > better.encodings
+```
+
+The `huffman` program can output [GraphViz]() `dot` format representations
+of both the min-priority tree it creates before constructing the
+encoding tree, and the encoding tree.
+
+Without a `-t` (dot-format encoding tree) or `-h` (dot-format heap) flag,
+the `huffman` program prints out human readable table of symboly numeric values
+and corresponding bits for each value.
+I believe this satisfies the problem statement.
+
 ## Analysis
 
 "[Easy]".
