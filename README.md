@@ -41,7 +41,7 @@ $ dot -Tpng -o better.png better.dot
 $ ./huffman -i better.tbl > better.encodings
 ```
 
-The `huffman` program can output [GraphViz]() `dot` format representations
+The `huffman` program can output [GraphViz](https://graphviz.org/) `dot` format representations
 of both the min-priority tree it creates before constructing the
 encoding tree, and the encoding tree.
 
@@ -49,6 +49,14 @@ Without a `-t` (dot-format encoding tree) or `-h` (dot-format heap) flag,
 the `huffman` program prints out human readable table of symboly numeric values
 and corresponding bits for each value.
 I believe this satisfies the problem statement.
+
+* `english.tbl` is a very simple proportion of letters in English text
+table. Doesn't include anything other than upper-case ASCII values,
+but that makes the encoding tree simpler to navigate.
+* `better.tbl` is a byte frequency table based on a bunch of english text
+I found on my laptop a while back. I also use this table of byte frequency
+in [single-byte Xor decoding](https://github.com/bediger4000/singlexor),
+to determine "closeness" of possibly decoded text to english text.
 
 ## Analysis
 
