@@ -40,3 +40,22 @@ even after pondering for a while.
 The [Huffman coding](https://en.wikipedia.org/wiki/Huffman_coding) wikipedia page
 gives a "simple algorithm" that involves building a tree from a minimum priority queue,
 where the priority of a character is that character's frequency.
+Once you have the tree,
+you can determine the bit patterns for each character by traversing the tree.
+A left child gets a 0-bit, a right child gets a 1-bit at each level of recursion.
+When the traverse reaches a leaf node,
+it has all the bits for the symbol at that leaf.
+
+## Interview Analysis
+
+This really does not strike me as "[Easy]".
+It involves 2 different data structures, a heap (used as a min-priority queue)
+and a binary tree.
+There's algorithms for adding and deleting elements to the min-priority queue,
+and there's a traverse of the tree built from the queue,
+which involves keeping track of left or right child recursion.
+
+The O(n) method of constructing the encoding tree is completely inobvious.
+
+Unless the candidate has recently gone through either of these algorithms,
+they're not going to do well at this problem at all.
