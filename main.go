@@ -3,11 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
 	"log"
-	"os"
 	"unicode"
 
+	"huffman/h"
 	"huffman/heap"
 	"huffman/tree"
 )
@@ -19,90 +18,50 @@ func main() {
 	fileName := flag.String("i", "", "file name of symbols and frequencies")
 	flag.Parse()
 
-	h, err := constructHeap(*fileName)
+	dict, err := h.ConstructDictFromFile(*fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	hp := h.ConstructHeapFromDict(dict)
+
 	if *drawHeap {
-		fmt.Printf("/* heap has %d elements */\n", len(h))
-		heap.Draw(h)
+		fmt.Printf("/* heap has %d elements */\n", len(hp))
+		heap.Draw(hp)
 		return
 	}
 
-	root := constructTree(h)
+	root := h.ConstructTree(hp)
 
 	if *drawTree {
 		tree.Draw(root)
 		return
 	}
 
-	outputEncoding(root)
-	fmt.Printf("%d symbols in %d total bits\n", totalSymbols, totalBits)
-}
-
-func constructHeap(fileName string) (heap.Heap, error) {
-	fin, err := os.Open(fileName)
-	if err != nil {
-		return nil, err
+	var total float64
+	freqs := make(map[rune]float64)
+	for _, node := range dict {
+		freqs[node.Char] = node.Freq
+		total += node.Freq
 	}
-	defer fin.Close()
-
-	var h heap.Heap
-
-	for lineNo := 1; true; lineNo++ {
-		var ch rune
-		var freq float64
-
-		n, err := fmt.Fscanf(fin, "%02x %f\n", &ch, &freq)
-		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return nil, err
-		}
-		if n != 2 {
-			fmt.Fprintf(os.Stderr, "line %d parse %d fields\n", lineNo, n)
-			continue
-		}
-		node := &tree.Leaf{
-			Freq: freq,
-			Char: rune(ch),
-		}
-		h = h.Insert(node)
+	for r, f := range freqs {
+		freqs[r] = f / total
 	}
 
-	return h, nil
+	outputEncoding(root, freqs)
+	fmt.Printf("%d symbols in %d total bits, ave %.03f\n", totalSymbols, totalBits, aveBitsPerSymbol)
 }
 
-func constructTree(h heap.Heap) tree.Node {
-	for len(h) > 1 {
-		var hn1, hn2 heap.Node
-
-		h, hn1 = h.Delete()
-		h, hn2 = h.Delete()
-
-		in1 := &tree.Interior{
-			Left:  hn1.(tree.Node),
-			Right: hn2.(tree.Node),
-			Freq:  hn1.Value() + hn2.Value(),
-		}
-
-		h = h.Insert(in1)
-	}
-
-	h, root := h.Delete()
-
-	return root.(tree.Node)
-}
-
-func outputEncoding(root tree.Node) {
+func outputEncoding(root tree.Node, freqs map[rune]float64) {
 	var path []rune
+	proportions = freqs
 	followPath(root, path)
 }
 
 var totalSymbols int
 var totalBits int
+var aveBitsPerSymbol float64
+var proportions map[rune]float64
 
 func followPath(node tree.Node, path []rune) {
 	switch node.(type) {
@@ -120,5 +79,7 @@ func followPath(node tree.Node, path []rune) {
 		}
 		totalSymbols++
 		totalBits += len(path)
+		pro := proportions[node.(*tree.Leaf).Char]
+		aveBitsPerSymbol += float64(len(path)) * pro
 	}
 }
