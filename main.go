@@ -1,40 +1,44 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io"
 	"log"
 	"os"
+	"unicode"
 
 	"huffman/heap"
 	"huffman/tree"
 )
 
 func main() {
-	h, err := constructHeap(os.Args[1])
+
+	drawHeap := flag.Bool("h", false, "dot-format heap representation on stdout")
+	drawTree := flag.Bool("t", false, "dot-format encoding tree representation on stdout")
+	fileName := flag.String("i", "", "file name of symbols and frequencies")
+	flag.Parse()
+
+	h, err := constructHeap(*fileName)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("/* heap has %d elements */\n", len(h))
 
-	for len(h) > 1 {
-		var hn1, hn2 heap.Node
-
-		h, hn1 = h.Delete()
-		h, hn2 = h.Delete()
-
-		in1 := &tree.Interior{
-			Left:  hn1.(tree.Node),
-			Right: hn2.(tree.Node),
-			Freq:  hn1.Value() + hn2.Value(),
-		}
-
-		h = h.Insert(in1)
+	if *drawHeap {
+		fmt.Printf("/* heap has %d elements */\n", len(h))
+		heap.Draw(h)
+		return
 	}
 
-	h, root := h.Delete()
+	root := constructTree(h)
 
-	tree.Draw(root.(tree.Node))
+	if *drawTree {
+		tree.Draw(root)
+		return
+	}
+
+	outputEncoding(root)
+	fmt.Printf("%d symbols in %d total bits\n", totalSymbols, totalBits)
 }
 
 func constructHeap(fileName string) (heap.Heap, error) {
@@ -50,7 +54,7 @@ func constructHeap(fileName string) (heap.Heap, error) {
 		var ch rune
 		var freq float64
 
-		n, err := fmt.Fscanf(fin, "%c %f\n", &ch, &freq)
+		n, err := fmt.Fscanf(fin, "%02x %f\n", &ch, &freq)
 		if err != nil {
 			if err == io.EOF {
 				break
@@ -69,4 +73,52 @@ func constructHeap(fileName string) (heap.Heap, error) {
 	}
 
 	return h, nil
+}
+
+func constructTree(h heap.Heap) tree.Node {
+	for len(h) > 1 {
+		var hn1, hn2 heap.Node
+
+		h, hn1 = h.Delete()
+		h, hn2 = h.Delete()
+
+		in1 := &tree.Interior{
+			Left:  hn1.(tree.Node),
+			Right: hn2.(tree.Node),
+			Freq:  hn1.Value() + hn2.Value(),
+		}
+
+		h = h.Insert(in1)
+	}
+
+	h, root := h.Delete()
+
+	return root.(tree.Node)
+}
+
+func outputEncoding(root tree.Node) {
+	var path []rune
+	followPath(root, path)
+}
+
+var totalSymbols int
+var totalBits int
+
+func followPath(node tree.Node, path []rune) {
+	switch node.(type) {
+	case *tree.Interior:
+		newpath := append(path, '0')
+		followPath(node.LeftChild(), newpath)
+		newpath = append(path, '1')
+		followPath(node.RightChild(), newpath)
+	case *tree.Leaf:
+		r := node.(*tree.Leaf).Char
+		if unicode.IsPrint(r) && (unicode.IsLetter(r) || unicode.IsNumber(r)) {
+			fmt.Printf("%c: %v\n", r, string(path))
+		} else {
+			fmt.Printf("%02x: %v\n", r, string(path))
+		}
+		totalSymbols++
+		totalBits += len(path)
+	}
 }
