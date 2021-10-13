@@ -3,6 +3,7 @@ package tree
 import (
 	"fmt"
 	"huffman/heap"
+	"unicode"
 )
 
 func (l *Leaf) Value() float64 {
@@ -17,7 +18,10 @@ func (l *Leaf) IsNil() bool {
 }
 
 func (l *Leaf) String() string {
-	return fmt.Sprintf("%c:%.02f", l.Char, l.Freq)
+	if l.Char != '"' && unicode.IsPrint(l.Char) {
+		return fmt.Sprintf("%c:%.02f", l.Char, l.Freq)
+	}
+	return fmt.Sprintf("%02x:%.02f", l.Char, l.Freq)
 }
 
 func (l *Leaf) GreaterThan(other heap.Node) bool {
