@@ -60,6 +60,14 @@ to determine "closeness" of possibly decoded text to english text.
 
 ![huffman encoding tree, english letters](english.png)
 
+Above you see the output of `./huffman -i english.tbl -t > english.dot`
+as rendered by the `dot` program of GraphViz.
+That's the encoding tree,
+with each node labeled with the english letter (if it's a leaf node)
+and the proportion of that letter relative to the whole.
+You can make out ETAOINHSRDLU as shorter-bit-representation symbols.
+You can see that it's no wonder 'Z' and 'Q' are high value Scrabble letters.
+
 ## Analysis
 
 "[Easy]".
