@@ -58,6 +58,8 @@ I found on my laptop a while back. I also use this table of byte frequency
 in [single-byte Xor decoding](https://github.com/bediger4000/singlexor),
 to determine "closeness" of possibly decoded text to english text.
 
+![huffman encoding tree, english letters](english.png)
+
 ## Analysis
 
 "[Easy]".
@@ -85,3 +87,41 @@ The O(n) method of constructing the encoding tree is completely inobvious.
 
 Unless the candidate has recently gone through either of these algorithms,
 they're not going to do well at this problem at all.
+The interviewer is unlikely to get what they want out of the interview.
+All in all, a very bad interview question.
+
+## Further exploration
+
+It might be a bad interview question,
+but it's actually interesting to do this algorithm from the Wikipedia page.
+The obvious next step is to build an encoder and a decoder.
+Which I did.
+
+```sh
+$ go build cmd/encode.go
+$ go build cmd/decode.go
+$ go build cmd/table.go
+$ find $GOPATH -name 'README.md' | xargs cat > big.txt
+$ ./table big.txt > big.tbl
+$ ./encode -i big.tbl -o readme.huff  ./README.md
+$ ./decode -i big.tbl -o readme.plain readme.huff
+$ ls -l README.md readme.huff readme.plain
+```
+
+When I do the above commands,
+I see that `encode` says it outputs 4.815631 bits per rune.
+
+```sh
+480 % ls -l README.md readme.huff readme.plain
+-rw-r--r-- 1 bediger bediger 3813 Oct 18 18:49 README.md
+-rw-r--r-- 1 bediger bediger 2296 Oct 18 18:51 readme.huff
+-rw-r--r-- 1 bediger bediger 3814 Oct 18 18:51 readme.plain
+```
+
+2296/3813 = 0.6021
+
+4.815631/8 = 0.6019
+
+`encode` really is getting the compression it says.
+
+Running `./huffman -i big.tbl` says that you should get 5.098 bits per symbol.
