@@ -125,3 +125,9 @@ I see that `encode` says it outputs 4.815631 bits per rune.
 `encode` really is getting the compression it says.
 
 Running `./huffman -i big.tbl` says that you should get 5.098 bits per symbol.
+
+Neither `encode` nor `decode` is spectacularly efficient code,
+nor is either one "good" code.
+They are just simple programs that allowed me to double check that
+Wikipedia's claims about Huffman Encoding are correct,
+and that a program can read prefix-free symbols from a stream of bits.
