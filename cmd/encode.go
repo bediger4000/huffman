@@ -107,6 +107,7 @@ type BitwiseOutput struct {
 	Encoding  map[rune]*EncodedSymbol
 	Fout      *os.File
 	ByteCount int
+	BitCount  int
 	RuneCount int
 
 	currentByte byte
@@ -149,14 +150,17 @@ func (bwo *BitwiseOutput) Write(r rune) {
 		bwo.currentByte <<= 1
 		bwo.currentByte |= (0x01 & encoded.Bits[i])
 		bwo.bitsInByte++
+		bwo.BitCount++
 	}
 }
 
 func (bwo *BitwiseOutput) Flush() {
+	bitsPerRune := float64(bwo.BitCount) / float64(bwo.RuneCount)
 	if bwo.bitsInByte == 0 {
+		fmt.Fprintf(os.Stderr, "Output %d bits in %d bytes, representing %d runes, %.02f bits/rune\n", bwo.BitCount, bwo.ByteCount, bwo.RuneCount, bitsPerRune)
 		return
 	}
-	// fmt.Fprintf(os.Stderr, "Flushing final %d bits\n", bwo.bitsInByte)
+	fmt.Fprintf(os.Stderr, "Flushing final %d bits\n", bwo.bitsInByte)
 	bwo.currentByte <<= (8 - bwo.bitsInByte)
 	bwo.ByteCount++
 	if _, err := bwo.Fout.Write([]byte{bwo.currentByte}); err != nil {
@@ -165,5 +169,6 @@ func (bwo *BitwiseOutput) Flush() {
 			bwo.ByteCount, bwo.RuneCount, err,
 		)
 	}
+	fmt.Fprintf(os.Stderr, "Output %d bits in %d bytes, representing %d runes, %02f bits/rune\n", bwo.BitCount, bwo.ByteCount, bwo.RuneCount, bitsPerRune)
 	bwo.Fout.Close()
 }
