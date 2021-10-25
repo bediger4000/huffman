@@ -139,3 +139,8 @@ nor is either one "good" code.
 They are just simple programs that allowed me to double check that
 Wikipedia's claims about Huffman Encoding are correct,
 and that a program can read prefix-free symbols from a stream of bits.
+
+A Huffman encoder like I wrote would be a good choice
+of compressor for [Normalized Compression Distance](https://en.wikipedia.org/wiki/Normalized_compression_distance)
+because the dictionary that appears in general-purpose compressors
+like `gzip` isn't necessarily included in the output.
