@@ -19,15 +19,17 @@ func main() {
 	}
 
 	var byteCount [256]int
+	totalByteCount := 0.0
 
 	for i := range buf {
 		byteCount[buf[i]]++
+		totalByteCount += 1.0
 	}
 
 	for i := range byteCount {
 		if byteCount[i] == 0 {
 			continue
 		}
-		fmt.Printf("%02x %d\n", i, byteCount[i])
+		fmt.Printf("%02x %.04f\n", i, float64(byteCount[i])/totalByteCount)
 	}
 }
