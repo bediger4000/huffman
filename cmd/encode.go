@@ -127,7 +127,6 @@ func NewBitwiseOut(outFileName string, encoding map[rune]*EncodedSymbol) (*Bitwi
 }
 
 func (bwo *BitwiseOutput) Write(r rune) {
-	// fmt.Fprintf(os.Stderr, "Write(%c)\n", r)
 	bwo.RuneCount++
 	encoded, ok := bwo.Encoding[r]
 	if !ok {
