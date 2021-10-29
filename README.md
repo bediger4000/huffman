@@ -142,5 +142,31 @@ and that a program can read prefix-free symbols from a stream of bits.
 
 A Huffman encoder like I wrote would be a good choice
 of compressor for [Normalized Compression Distance](https://en.wikipedia.org/wiki/Normalized_compression_distance)
-because the dictionary that appears in general-purpose compressors
-like `gzip` isn't necessarily included in the output.
+because the dictionary that appears in output of general-purpose compressors
+like `gzip` isn't included in my encoder's output.
+
+### Symbol generation
+
+It occurred to me that walking an encoding tree with a stream of random bits
+allows you to generate streams of symbols that might be statistically similar to the
+symbol distribution used to create the encoding tree.
+
+```
+$ go build cmd/recode.go
+$ ./recode -i better.tbl -o random.txt
+$ file random.txt
+random.txt: Unicode text, UTF-8 text
+$ go build cmd/table.go
+$ ./table random.txt > random.tbl
+$ join better.tbl random.tbl
+09 0.001816 0.0019
+0a 0.025974 0.0318
+20 0.148642 0.1244
+21 0.000148 0.0001
+22 0.002398 0.0020
+23 0.000461 0.0004
+ ...
+```
+
+Looks like the character frequency is close, but not exact.
+I don't know if one of those markov chain generators would do better.
