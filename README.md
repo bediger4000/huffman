@@ -46,24 +46,24 @@ of both the min-priority tree it creates before constructing the
 encoding tree, and the encoding tree.
 
 Without a `-t` (dot-format encoding tree) or `-h` (dot-format heap) flag,
-the `huffman` program prints out human readable table of symboly numeric values
-and corresponding bits for each value.
+the `huffman` program prints out human readable table of symbols' numeric values
+and corresponding bit sequence for each value.
 I believe this satisfies the problem statement.
 
 * `english.tbl` is a very simple proportion of letters in English text
 table. Doesn't include anything other than upper-case ASCII values,
 but that makes the encoding tree simpler to navigate.
-* `better.tbl` is a byte frequency table based on a bunch of english text
+* `better.tbl` is a byte frequency table based on a bunch of English text
 I found on my laptop a while back. I also use this table of byte frequency
 in [single-byte Xor decoding](https://github.com/bediger4000/singlexor),
-to determine "closeness" of possibly decoded text to english text.
+to determine "closeness" of possibly decoded text to English text.
 
-![huffman encoding tree, english letters](english.png)
+![Huffman encoding tree, English letters](english.png)
 
 Above you see the output of `./huffman -i english.tbl -t > english.dot`
 as rendered by the `dot` program of GraphViz.
 That's the encoding tree,
-with each node labeled with the english letter (if it's a leaf node)
+with each node labeled with the English letter (if it's a leaf node)
 and the proportion of that letter relative to the whole.
 You can make out ETAOINHSRDLU as shorter-bit-representation symbols.
 You can see that it's no wonder 'Z' and 'Q' are high value Scrabble letters.
@@ -73,7 +73,7 @@ You can see that it's no wonder 'Z' and 'Q' are high value Scrabble letters.
 "[Easy]".
 I had no idea how to do this,
 even after pondering for a while.
-The [Huffman coding](https://en.wikipedia.org/wiki/Huffman_coding) wikipedia page
+The [Huffman coding](https://en.wikipedia.org/wiki/Huffman_coding) Wikipedia page
 gives a "simple algorithm" that involves building a tree from a minimum priority queue,
 where the priority of a character is that character's frequency.
 Once you have the tree,
@@ -91,7 +91,7 @@ There's algorithms for adding and deleting elements to the min-priority queue,
 and there's a traverse of the tree built from the queue,
 which involves keeping track of left or right child recursion.
 
-The O(n) method of constructing the encoding tree is completely inobvious.
+The O(n) method of constructing the encoding tree is completely in-obvious.
 
 Unless the candidate has recently gone through either of these algorithms,
 they're not going to do well at this problem at all.
@@ -169,4 +169,4 @@ $ join better.tbl random.tbl
 ```
 
 Looks like the character frequency is close, but not exact.
-I don't know if one of those markov chain generators would do better.
+I don't know if one of those Mark chain generators would do better.
