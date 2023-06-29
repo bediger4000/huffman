@@ -30,6 +30,6 @@ func main() {
 		if byteCount[i] == 0 {
 			continue
 		}
-		fmt.Printf("%02x %.04f\n", i, float64(byteCount[i])/totalByteCount)
+		fmt.Printf("%02x %.08f\n", i, float64(byteCount[i])/totalByteCount)
 	}
 }
