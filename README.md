@@ -93,6 +93,35 @@ which involves keeping track of left or right child recursion.
 
 The O(n) method of constructing the encoding tree is completely in-obvious.
 
+Further, the "simple algorithm" will never construct a tree like the
+example in the problem statement.
+The example tree has two interior nodes that only have a single child.
+The 'c' and 's' nodes could take the place of the interior nodes
+above each of them in the example tree:
+
+```
+        *
+      /   \
+    *       *
+   / \     / \
+  c   a   t   s
+```
+
+If you use English frequencies for 'c', 'a', 't', 's',
+and run it through the Huffman algorithm, you get a tree like this:
+
+```
+        *
+      /   \
+    T       *
+           / \
+          A   *
+             / \
+            C   S
+```
+
+The example doesn't illuminate, and it's misleading and wrong.
+
 Unless the candidate has recently gone through either of these algorithms,
 they're not going to do well at this problem at all.
 The interviewer is unlikely to get what they want out of the interview.
@@ -169,4 +198,4 @@ $ join better.tbl random.tbl
 ```
 
 Looks like the character frequency is close, but not exact.
-I don't know if one of those Mark chain generators would do better.
+I don't know if one of those Markov chain generators would do better.
